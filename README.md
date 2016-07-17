@@ -43,12 +43,13 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/L8YU2gM.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
-
+- I meet some problem when create GUI for Filter View. So i don't have enough time to make it better. 
+- I will make it brighter and will commit later
 Describe any challenges encountered while building the app.
 
 ## License
