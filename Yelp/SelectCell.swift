@@ -10,8 +10,13 @@ import UIKit
 
 class SelectCell: UITableViewCell {
 
+    @IBOutlet weak var languageLabel: UILabel!
+    
+    @IBOutlet weak var checkImageView: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.checkImageView.hidden = true
         // Initialization code
     }
 
