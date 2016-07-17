@@ -16,7 +16,7 @@ class BussinessViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     var businesses:[Business]?
     var searchBar: UISearchBar!
-    
+     var isMoreDataLoading = false
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -55,6 +55,7 @@ class BussinessViewController: UIViewController {
             }
             self.tableView.reloadData()
             MBProgressHUD.hideHUDForView(self.view, animated: true)
+            self.isMoreDataLoading = false
             
         });
     }
@@ -72,7 +73,7 @@ class BussinessViewController: UIViewController {
     
 }
 
-extension BussinessViewController: UISearchControllerDelegate, UITableViewDelegate, UITableViewDataSource, FilterViewControllerDelegate{
+extension BussinessViewController: UISearchControllerDelegate, UITableViewDelegate, UITableViewDataSource, FilterViewControllerDelegate, UIScrollViewDelegate {
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return businesses?.count ?? 0
@@ -89,6 +90,9 @@ extension BussinessViewController: UISearchControllerDelegate, UITableViewDelega
         
         let categories = filters["categories"] as? [String]
         print(filters)
+        let yc =  YelpClient.sharedInstance
+        yc.offset = 0
+        yc.limit = 5
         let sort: YelpSortMode
         if let so = filters["sort"] {
             switch so as! String {
@@ -105,14 +109,39 @@ extension BussinessViewController: UISearchControllerDelegate, UITableViewDelega
         
         
         Business.searchWithTerm("Arts & Entertainment", sort: sort, categories: categories, deals: filters["deal"] as? Bool) { (businesses: [Business]!, error : NSError!) -> Void in
+            if (error != nil ) {
+                MBProgressHUD.showHUDAddedTo(self.view, animated: false)
+                self.isMoreDataLoading = false
+            }
+                MBProgressHUD.showHUDAddedTo(self.view, animated: true)
                 self.businesses = businesses
                 self.tableView.reloadData()
                 self.tableView.setContentOffset(CGPointZero, animated: true)
+                self.isMoreDataLoading = false
             
         }
     }
     
-    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        if (!isMoreDataLoading) {
+            let scrollViewContentHeight = tableView.contentSize.height
+            let scrollOffsetThreshold = scrollViewContentHeight - tableView.bounds.size.height
+            
+            // When the user has scrolled past the threshold, start requesting
+            if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView.dragging) {
+                isMoreDataLoading = true
+                let yc =  YelpClient.sharedInstance
+                yc.offset = yc.offset + 5
+                yc.limit = yc.limit + 5
+                if (yc.offset <= 15) {
+                    doSearch("Thai")
+                }
+               
+            } else {
+                MBProgressHUD.hideHUDForView(self.view, animated: true)
+            }
+        }
+    }
 }
 
 extension BussinessViewController: UISearchBarDelegate {

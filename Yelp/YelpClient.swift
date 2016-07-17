@@ -24,7 +24,8 @@ enum YelpSortMode: Int {
 class YelpClient: BDBOAuth1RequestOperationManager {
     var accessToken: String!
     var accessSecret: String!
-    
+    var offset = 0;
+    var limit = 5;
     class var sharedInstance : YelpClient {
         struct Static {
             static var token : dispatch_once_t = 0
@@ -72,7 +73,8 @@ class YelpClient: BDBOAuth1RequestOperationManager {
         if deals != nil {
             parameters["deals_filter"] = deals!
         }
-        
+        parameters["offset"] = offset
+        parameters["limit"] = limit
         print(parameters)
         
         return self.GET("search", parameters: parameters, success: { (operation: AFHTTPRequestOperation!, response: AnyObject!) -> Void in
